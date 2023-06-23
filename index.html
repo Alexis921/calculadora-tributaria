@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora Tributaria</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f2f2f2;
+    }
+  
+    h1 {
+      text-align: center;
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 30px;
+    }
+  
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  
+    table td {
+      padding: 10px;
+    }
+  
+    input[type="text"] {
+      width: 150px;
+      padding: 5px;
+      font-size: 16px;
+    }
+  
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  
+    #resultado {
+      text-align: left;
+      font-size: 18px;
+      margin-top: 20px;
+      border: 2px solid #fff;
+      border-radius: 5px;
+      padding: 5px;
+    }
+    
+    #resultado div {
+      margin-bottom: 10px;
+    }
+    
+    #resultado div span {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Calculadora Tributaria</h1>
+  
+  <table>
+    <tr>
+      <td>RUC:</td>
+      <td><input type="text" id="ruc"></td>
+    </tr>
+    <tr>
+      <td>Tributo a actualizar:</td>
+      <td>
+        <select id="tributo">
+          <option value="IGV">IGV</option>
+          <option value="RENTA">RENTA</option>
+          <option value="ESSALUD">ESSALUD</option>
+          <option value="ONP">ONP</option>
+          <option value="OTRO">OTRO</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>Periodo tributario:</td>
+      <td>
+        <select id="mes">
+          <option value="enero">enero</option>
+          <option value="febrero">febrero</option>
+          <option value="marzo">marzo</option>
+          <option value="abril">abril</option>
+          <option value="mayo">mayo</option>
+          <option value="junio">junio</option>
+          <option value="julio">julio</option>
+          <option value="agosto">agosto</option>
+          <option value="setiembre">setiembre</option>
+          <option value="octubre">octubre</option>
+          <option value="noviembre">noviembre</option>
+          <option value="diciembre">diciembre</option>
+        </select>
+        <select id="anio">
+          <option value="2020">2020</option>
+          <option value="2021">2021</option>
+          <option value="2022">2022</option>
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>Fecha de vencimiento:</td>
+      <td><input type="text" id="fechaVencimiento" placeholder="dd/mm/año"></td>
+    </tr>
+    <tr>
+      <td>Fecha de actualización:</td>
+      <td><input type="text" id="fechaActualizacion" placeholder="dd/mm/año"></td>
+    </tr>
+    <tr>
+      <td>Importe:</td>
+      <td><input type="text" id="importe"></td>
+    </tr>
+    <tr>
+      <td colspan="2"><button onclick="calcular()">Calcular</button></td>
+    </tr>
+  </table>
+  
+  <div id="resultado"></div>
+  
+  <script>
+    function calcular() {
+      var ruc = document.getElementById("ruc").value;
+      var tributo = document.getElementById("tributo").value;
+      var mes = document.getElementById("mes").value;
+      var anio = document.getElementById("anio").value;
+      var fechaVencimiento = document.getElementById("fechaVencimiento").value;
+      var fechaActualizacion = document.getElementById("fechaActualizacion").value;
+      var importe = parseFloat(document.getElementById("importe").value);
+      
+      if (ruc.length !== 11) {
+        alert("RUC incorrecto");
+        return;
+      }
+      
+      // Convertir fechas a objetos Date
+      var fechaVencimientoParts = fechaVencimiento.split("/");
+      var fechaVencimientoDate = new Date(
+        fechaVencimientoParts[2],
+        fechaVencimientoParts[1] - 1,
+        fechaVencimientoParts[0]
+      );
+      
+      var fechaActualizacionParts = fechaActualizacion.split("/");
+      var fechaActualizacionDate = new Date(
+        fechaActualizacionParts[2],
+        fechaActualizacionParts[1] - 1,
+        fechaActualizacionParts[0]
+      );
+      
+      // Calcular número de días
+      var numeroDias = Math.round((fechaActualizacionDate - fechaVencimientoDate) / (1000 * 60 * 60 * 24));
+      
+      // Calcular intereses
+      var intereses = importe * 0.0003 * numeroDias;
+      
+      // Calcular monto a pagar
+      var montoAPagar = importe + intereses;
+      
+      // Mostrar resultados
+      var resultadoDiv = document.getElementById("resultado");
+      resultadoDiv.innerHTML = `
+        <div>
+          <span>RUC:</span> ${ruc}
+        </div>
+        <div>
+          <span>Periodo tributario:</span> ${mes} ${anio}
+        </div>
+        <div>
+          <span>Fecha de vencimiento:</span> ${fechaVencimiento}
+        </div>
+        <div>
+          <span>Fecha de actualización:</span> ${fechaActualizacion}
+        </div>
+        <div>
+          <span>Intereses:</span> ${intereses.toFixed(2)}
+        </div>
+        <div>
+          <span>Monto a pagar:</span> ${montoAPagar.toFixed(2)}
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
